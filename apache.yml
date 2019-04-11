@@ -1,0 +1,24 @@
+---
+- hosts: all
+  user: ansadm
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: 1. Install latest version http/apache RPMs
+    yum: name=httpd state=present
+
+  - name: 2. Starting HTTPD service
+    service: name=httpd state=started enabled=yes
+
+  - name: 3. Copy the index.html file
+    copy: src=/tmp/index.html dest=/var/www/html/index.html mode=0664
+    
+  - name: 4. Add Apache IPTable rule
+    command: /sbin/iptables -I INPUT 1 -p tcp --dport http -j ACCEPT -m comment --comment "Apache port on 80"
+
+  - name: 5. Save the iptable rule
+    command: iptables-save
+
+$ ansible-playbook apache.yml --check             ---------------------> (to check the syntax of the yaaml file)
+
+$ ansible-playbook apache.yml -i /etc/ansible/hosts -l all
