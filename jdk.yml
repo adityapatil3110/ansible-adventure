@@ -1,0 +1,18 @@
+---
+- hosts: all
+  user: ansadm
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: 1. Download version 1.8 of jdk
+    get_url: 
+        url: https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.rpm
+        headers: 
+         Cookie: 'oraclelicense=accept-securebackup-cookie'
+        dest: "/home/ansadm/"
+
+  - name: 2. Install the downloaded jdk
+    yum: name=/home/ansadm/jdk-8u201-linux-x64.rpm state=present
+  
+  - name: 3. Check jdk is installed or not?
+    command: rpm -qa | grep jdk
